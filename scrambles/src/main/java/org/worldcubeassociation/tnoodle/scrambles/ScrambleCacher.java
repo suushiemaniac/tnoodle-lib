@@ -73,6 +73,7 @@ public class ScrambleCacher {
                         scrambles.notifyAll();
                     }
                     fireScrambleCacheUpdated();
+                    fireScrambleGenerated(scramble);
                 }
             }
         };
@@ -114,6 +115,26 @@ public class ScrambleCacher {
         }
     }
 
+    private void fireScrambleGenerated(String scr) {
+        for(ScrambleCacherListener l : ls) {
+            l.scrambleGenerated(this, scr);
+        }
+    }
+
+    private void fireScrambleRetrieved(String scr) {
+        for(ScrambleCacherListener l : ls) {
+            l.scrambleRetrieved(this, scr);
+        }
+    }
+
+    public void addListener(ScrambleCacherListener listener) {
+        ls.add(listener);
+    }
+
+    public void clearListeners() {
+        ls.clear();
+    }
+
     public int getAvailableCount() {
         return available;
     }
@@ -148,6 +169,7 @@ public class ScrambleCacher {
             scrambles.notifyAll();
         }
         fireScrambleCacheUpdated();
+        fireScrambleRetrieved(scramble);
         return scramble;
     }
 
