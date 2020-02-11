@@ -3,6 +3,7 @@ import configurations.Publications.configureBintrayTarget
 import configurations.Publications.configureMavenPublication
 
 description = "Chen Shuang's (https://github.com/cs0x7f) awesome 3x3 scrambler built on top of Herbert Kociemba's Java library."
+version = "0.16.4"
 
 plugins {
     `java-library`

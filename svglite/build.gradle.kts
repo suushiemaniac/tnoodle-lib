@@ -5,6 +5,7 @@ import configurations.Publications.configureBintrayTarget
 import configurations.Publications.configureMavenPublication
 
 description = "A dead simple svg generation library written in pure Java, with no dependencies. This code runs on both desktop Java, Android, and compiles to Javascript with GWT."
+version = "0.16.4"
 
 attachRemoteRepositories()
 
