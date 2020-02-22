@@ -10,6 +10,7 @@ pluginManagement {
     }
 }
 
+include("cube555")
 include("min2phase")
 include("scrambles")
 include("sq12phase")
