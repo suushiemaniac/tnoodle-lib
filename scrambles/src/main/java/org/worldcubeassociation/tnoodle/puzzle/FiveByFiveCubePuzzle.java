@@ -1,7 +1,7 @@
 package org.worldcubeassociation.tnoodle.puzzle;
 
-import cs.cube555.Search;
 import cs.cube555.Tools;
+import cs.min2phase.Search;
 import org.timepedia.exporter.client.Export;
 import org.worldcubeassociation.tnoodle.scrambles.AlgorithmBuilder;
 import org.worldcubeassociation.tnoodle.scrambles.AlgorithmBuilder.MergingMode;
@@ -14,27 +14,37 @@ import java.util.Random;
 @Export
 public class FiveByFiveCubePuzzle extends CubePuzzle {
     private ThreadLocal<cs.cube555.Search> cubeFiveFiveFiveSearcher = null;
+    private ThreadLocal<cs.min2phase.SearchWCA> reducedSolver = null;
 
     public FiveByFiveCubePuzzle() {
         super(5);
-        Search.init();
 
         cubeFiveFiveFiveSearcher = new ThreadLocal<cs.cube555.Search>() {
             protected cs.cube555.Search initialValue() {
+                cs.cube555.Search.init();
                 return new cs.cube555.Search();
             };
+        };
+
+        reducedSolver = new ThreadLocal<cs.min2phase.SearchWCA>() {
+            @Override
+            protected cs.min2phase.SearchWCA initialValue() {
+                return new cs.min2phase.SearchWCA();
+            }
         };
     }
 
     @Override
     public PuzzleStateAndGenerator generateRandomMoves(Random r) {
         String randomCube = Tools.randomCube(r);
-        String solutionRaw = cubeFiveFiveFiveSearcher.get().solveReduction(randomCube, 0)[0];
+        String[] solutionPhases = cubeFiveFiveFiveSearcher.get().solveReduction(randomCube, 0);
+
+        String reductionRaw = solutionPhases[0];
 
         StringBuilder inverseBuilder = new StringBuilder();
-        String[] solutionSplits = solutionRaw.split("\\s+");
+        String[] reductionSplits = reductionRaw.split("\\s+");
 
-        for (String move : solutionSplits) {
+        for (String move : reductionSplits) {
             char baseMove = move.charAt(0);
             String wcaMove = Character.isLowerCase(baseMove)
                 ? (Character.toUpperCase(baseMove) + "w")
@@ -46,6 +56,9 @@ public class FiveByFiveCubePuzzle extends CubePuzzle {
             inverseBuilder.insert(0, inverseMove);
             inverseBuilder.insert(0, " ");
         }
+
+        String reducedSolution = reducedSolver.get().solution(solutionPhases[1], 21, Integer.MAX_VALUE, 500, Search.INVERSE_SOLUTION);
+        inverseBuilder.insert(0, reducedSolution);
 
         String solution = inverseBuilder.toString().trim();
         AlgorithmBuilder ab = new AlgorithmBuilder(this, MergingMode.CANONICALIZE_MOVES);
