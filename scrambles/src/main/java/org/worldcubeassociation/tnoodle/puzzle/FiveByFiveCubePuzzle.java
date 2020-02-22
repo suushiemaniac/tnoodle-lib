@@ -29,14 +29,42 @@ public class FiveByFiveCubePuzzle extends CubePuzzle {
     @Override
     public PuzzleStateAndGenerator generateRandomMoves(Random r) {
         String randomCube = Tools.randomCube(r);
-        // TODO invert
-        String solution = cubeFiveFiveFiveSearcher.get().solveReduction(randomCube, 0)[0];
+        String solutionRaw = cubeFiveFiveFiveSearcher.get().solveReduction(randomCube, 0)[0];
+
+        StringBuilder inverseBuilder = new StringBuilder();
+        String[] solutionSplits = solutionRaw.split("\\s+");
+
+        for (String move : solutionSplits) {
+            char baseMove = move.charAt(0);
+            String wcaMove = Character.isLowerCase(baseMove)
+                ? (Character.toUpperCase(baseMove) + "w")
+                : String.valueOf(baseMove);
+
+            String convertedMove = wcaMove + move.substring(1);
+            String inverseMove = invertMove(convertedMove);
+
+            inverseBuilder.insert(0, inverseMove);
+            inverseBuilder.insert(0, " ");
+        }
+
+        String solution = inverseBuilder.toString().trim();
         AlgorithmBuilder ab = new AlgorithmBuilder(this, MergingMode.CANONICALIZE_MOVES);
+
         try {
             ab.appendAlgorithm(solution.trim());
         } catch (InvalidMoveException e) {
             throw new RuntimeException(new InvalidScrambleException(solution, e));
         }
         return ab.getStateAndGenerator();
+    }
+
+    protected static String invertMove(String baseMove) {
+        if (baseMove.endsWith("2")) {
+            return baseMove;
+        } else if (baseMove.endsWith("'")) {
+            return baseMove.substring(0, baseMove.length() - 1);
+        } else {
+            return baseMove + "'";
+        }
     }
 }
