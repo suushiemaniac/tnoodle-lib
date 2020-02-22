@@ -29,6 +29,7 @@ dependencies {
 
     implementation(project(":min2phase"))
     implementation(project(":threephase"))
+    implementation(project(":cube555"))
     implementation(project(":sq12phase"))
 
     api(GWTEXPORTER)
