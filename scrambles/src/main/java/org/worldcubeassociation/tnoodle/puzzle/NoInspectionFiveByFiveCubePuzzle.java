@@ -7,8 +7,9 @@ import org.worldcubeassociation.tnoodle.scrambles.AlgorithmBuilder;
 import org.timepedia.exporter.client.Export;
 
 @Export
-public class NoInspectionFiveByFiveCubePuzzle extends FiveByFiveCubePuzzle {
+public class NoInspectionFiveByFiveCubePuzzle extends CubePuzzle {
     public NoInspectionFiveByFiveCubePuzzle() {
+        super(5);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.worldcubeassociation.tnoodle.puzzle;
 
 import cs.cube555.Tools;
-import cs.min2phase.Search;
+import cs.min2phase.SearchWCA;
 import org.timepedia.exporter.client.Export;
 import org.worldcubeassociation.tnoodle.scrambles.AlgorithmBuilder;
 import org.worldcubeassociation.tnoodle.scrambles.AlgorithmBuilder.MergingMode;
@@ -12,26 +12,31 @@ import org.worldcubeassociation.tnoodle.scrambles.PuzzleStateAndGenerator;
 import java.util.Random;
 
 @Export
-public class FiveByFiveCubePuzzle extends CubePuzzle {
-    private ThreadLocal<cs.cube555.Search> cubeFiveFiveFiveSearcher = null;
-    private ThreadLocal<cs.min2phase.SearchWCA> reducedSolver = null;
+public class FiveByFiveRandomStateCubePuzzle extends CubePuzzle {
+    private final ThreadLocal<cs.cube555.Search> cubeFiveFiveFiveSearcher;
+    private final ThreeByThreeCubePuzzle reducedSolver;
 
-    public FiveByFiveCubePuzzle() {
+    public FiveByFiveRandomStateCubePuzzle() {
         super(5);
 
         cubeFiveFiveFiveSearcher = new ThreadLocal<cs.cube555.Search>() {
             protected cs.cube555.Search initialValue() {
                 cs.cube555.Search.init();
                 return new cs.cube555.Search();
-            };
-        };
-
-        reducedSolver = new ThreadLocal<cs.min2phase.SearchWCA>() {
-            @Override
-            protected cs.min2phase.SearchWCA initialValue() {
-                return new cs.min2phase.SearchWCA();
             }
         };
+
+        reducedSolver = new ThreeByThreeCubePuzzle();
+    }
+
+    @Override
+    public String getShortName() {
+        return "555rs";
+    }
+
+    @Override
+    public String getLongName() {
+        return "5x5x5 (random state, unofficial)";
     }
 
     @Override
@@ -57,7 +62,7 @@ public class FiveByFiveCubePuzzle extends CubePuzzle {
             inverseBuilder.insert(0, " ");
         }
 
-        String reducedSolution = reducedSolver.get().solution(solutionPhases[1], 21, Integer.MAX_VALUE, 500, Search.INVERSE_SOLUTION);
+        String reducedSolution = reducedSolver.solveRandomState(solutionPhases[1]).generator;
         inverseBuilder.insert(0, reducedSolution);
 
         String solution = inverseBuilder.toString().trim();

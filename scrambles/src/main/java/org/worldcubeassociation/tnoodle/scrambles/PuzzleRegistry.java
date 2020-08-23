@@ -7,8 +7,8 @@ public enum PuzzleRegistry {
     THREE(ThreeByThreeCubePuzzle.class),
     FOUR(FourByFourCubePuzzle.class),
     FOUR_FAST(FourByFourRandomTurnsCubePuzzle.class),
-    FIVE(FiveByFiveCubePuzzle.class),
-    FIVE_FAST(FiveByFiveRandomTurnsCubePuzzle.class),
+    FIVE(CubePuzzle.class, 5),
+    FIVE_RANDOM_STATE(FiveByFiveRandomStateCubePuzzle.class),
     SIX(CubePuzzle.class, 6),
     SEVEN(CubePuzzle.class, 7),
     THREE_NI(NoInspectionThreeByThreeCubePuzzle.class),
@@ -21,7 +21,7 @@ public enum PuzzleRegistry {
     CLOCK(ClockPuzzle.class),
     SKEWB(SkewbPuzzle.class);
 
-    private LazySupplier<? extends Puzzle> puzzleSupplier;
+    private final LazySupplier<? extends Puzzle> puzzleSupplier;
 
     <T extends Puzzle> PuzzleRegistry(Class<T> suppliyingClass, Object... ctorArgs) {
         this.puzzleSupplier = new LazySupplier<T>(suppliyingClass, ctorArgs);
